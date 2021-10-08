@@ -1,0 +1,54 @@
+@startuml
+
+title "NFT Minting with single NFT contract"
+
+participant "Alice" as ali
+participant "Bob" as bob
+participant "Charlie" as cha
+participant "Kollektor" as kol
+participant "NFT contract\n(stateful)" as nfc
+participant "Royalty rules contract\n(stateful)" as roc
+
+
+== Mint NFT ==
+
+ali -> kol: create NFT
+kol -> nfc: mint NFT
+nfc -> nfc: mint NFT
+nfc -> roc: issue royalty rules contract
+nfc -> nfc: store NFT together with\nroyalty contract address
+nfc -> ali: send NFT
+
+
+== First NFT Trade ==
+
+ali -> nfc: sell NFT
+nfc -> nfc: store NFT state to SELLABLE
+bob -> nfc: buy alice`s NFT
+nfc -> nfc: check if NFT is sellable
+nfc -> nfc: get royalty contract address
+roc -> nfc: return royalty conditions
+ali -> nfc: transfer NFT
+nfc -> bob: transfer NFT
+nfc -> ali: send funds
+nfc -> kol: send funds
+nfc -> nfc: update NFT state to LOCKED
+
+
+== Secondary NFT Trade ==
+
+bob -> nfc: sell NFT
+nfc -> nfc: store NFT state to SELLABLE
+cha -> nfc: buy bob`s NFT
+nfc -> nfc: check if NFT is sellable
+nfc -> nfc: get royalty contract address
+nfc -> roc: get royalty conditions
+bob -> nfc: transfer NFT
+nfc -> cha: transfer NFT
+nfc -> ali: send funds
+nfc -> bob: send funds
+nfc -> kol: send funds
+nfc -> nfc: update NFT state to LOCKED
+
+
+@enduml

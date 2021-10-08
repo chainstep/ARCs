@@ -1,0 +1,27 @@
+@startuml
+
+title "NFT Minting with Factory and rekeying"
+
+participant "Alice" as ali
+participant "Bob" as bob
+participant "Charlie" as cha
+participant "Kollektor" as kol
+participant "NFT Factory contract\n(stateless)" as fac
+participant "NFT contract\n(stateful)" as nfc
+participant "NFT account" as nfa
+
+
+== Mint NFT ==
+
+ali -> kol: create NFT
+kol -> fac: mint NFT
+fac -> nfc: issue NFT contract
+nfc -> nfa: create NFT account
+nfc -> nfa: mint NFT (non-transferable)
+nfc -> nfc: store royalty conditions\nand address
+nfc -> ali: rekey NFT to alice account
+nfc -> fac: return contract address
+fac -> kol: return contract address
+
+
+@enduml

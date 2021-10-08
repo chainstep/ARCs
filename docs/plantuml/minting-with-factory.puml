@@ -1,0 +1,54 @@
+@startuml
+
+title "NFT Minting with Factory"
+
+participant "Alice" as ali
+participant "Bob" as bob
+participant "Charlie" as cha
+participant "Kollektor" as kol
+participant "NFT Factory contract\n(stateless)" as fac
+participant "NFT contract\n(stateful)" as nfc
+
+
+== Mint NFT ==
+
+ali -> kol: create NFT
+kol -> fac: mint NFT
+fac -> nfc: issue NFT contract
+nfc -> nfc: mint NFT
+nfc -> nfc: store royalty conditions
+nfc -> ali: send NFT to alice\nvia clawback address
+nfc -> fac: return contract address
+fac -> kol: return contract address
+
+
+== First NFT Trade ==
+
+ali -> nfc: sell NFT
+nfc -> nfc: store NFT state to SELLABLE
+bob -> nfc: buy alice`s NFT
+nfc -> nfc: check if NFT is sellable
+nfc -> nfc: get royalty conditions
+ali -> nfc: transfer NFT
+nfc -> bob: transfer NFT
+nfc -> ali: send funds
+nfc -> kol: send funds
+nfc -> nfc: update NFT state to LOCKED
+
+
+== Secondary NFT Trade ==
+
+bob -> nfc: sell NFT
+nfc -> nfc: store NFT state to SELLABLE
+cha -> nfc: buy bob`s NFT
+nfc -> nfc: check if NFT is sellable
+nfc -> nfc: get royalty conditions
+bob -> nfc: transfer NFT
+nfc -> cha: transfer NFT
+nfc -> ali: send funds
+nfc -> bob: send funds
+nfc -> kol: send funds
+nfc -> nfc: update NFT state to LOCKED
+
+
+@enduml
